@@ -1,3 +1,4 @@
+
 init.causalForest <- function(formula, data, treatment, weights=F, cost=F, num.trees,ncov_sample) { 
   num.obs <- nrow(data)
   trees <- vector("list", num.trees)
@@ -11,7 +12,12 @@ init.causalForest <- function(formula, data, treatment, weights=F, cost=F, num.t
   return(causalForestobj)
 } 
 
-predict.causalForest <- function(forest, newdata, predict.all = FALSE, type="vector") {
+predict.causalForest <- function(forest, newdata, predict.all = FALSE, type="vector", printOutput = F) {
+  
+  printFn <- function(text, printBoolean = printOutput){
+    if(printBoolean){ print(text) }
+  }
+  
   if (!inherits(forest, "causalForest")) stop("Not a legitimate \"causalForest\" object")
   
   vars <- all.vars(forest$formula)
@@ -27,7 +33,7 @@ predict.causalForest <- function(forest, newdata, predict.all = FALSE, type="vec
   })
   
   #replace sapply with a loop if needed
-  print(dim(individual))
+  printFn(dim(individual))
   aggregate <- rowMeans(individual)
   if (predict.all) {
     list(aggregate = aggregate, individual = individual)
@@ -43,9 +49,14 @@ causalForest <- function(formula, data, treatment,
                          propensity, control, split.alpha = 0.5, cv.alpha = 0.5,
                          sample.size.total = floor(nrow(data) / 10), sample.size.train.frac = .5,
                          mtry = ceiling(ncol(data)/3), nodesize = 1, num.trees=nrow(data),
-                         cost=F, weights=F,ncolx,ncov_sample, seed) {
+                         cost=F, weights=F,ncolx,ncov_sample, seed, printOutput = F) {
   
   # do not implement subset option of causalTree, that is inherited from rpart but have not implemented it here yet
+  
+  printFn <- function(text, printBoolean = printOutput){
+    if(printBoolean){ print(text) }
+  }
+  
   
   vars <- all.vars(formula)
   y <- vars[[1]]
@@ -70,11 +81,11 @@ causalForest <- function(formula, data, treatment,
       set.seed(seed)
   }
   
-  print("Building trees ...")
+  printFn("Building trees ...")
   
   for (tree.index in 1:num.trees) {
     
-    print(paste("Tree", as.character(tree.index)))
+    printFn(paste("Tree", as.character(tree.index)))
     
     full.idx <- sample.int(num.obs, sample.size, replace = FALSE)
     
@@ -150,7 +161,8 @@ causalForest <- function(formula, data, treatment,
                                     bucketMax = bucketMax, cv.option="CT", cv.Honest=T, 
                                     minsize = nodesize, 
                                     split.alpha = 0.5, cv.alpha = 0.5, xval=0, 
-                                    HonestSampleSize=est.size, cp=0)
+                                    HonestSampleSize=est.size, cp=0,
+                                    printOutput = printOutput)
     }
     else {
       tree.obj <- causalTree(formula, data = dataTree, treatment = treatmentdf[full.idx,], 
@@ -159,7 +171,8 @@ causalForest <- function(formula, data, treatment,
                              bucketNum = bucketNum,
                              bucketMax = bucketMax, cv.option="CT", cv.Honest=T,
                              x = FALSE, y = TRUE,
-                             split.alpha = 0.5, cv.alpha = 0.5,cv.gamma=0.5,split.gamma=0.5)
+                             split.alpha = 0.5, cv.alpha = 0.5,cv.gamma=0.5,split.gamma=0.5,
+                             printOutput = printOutput)
       
     }
     

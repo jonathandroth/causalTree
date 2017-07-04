@@ -8,8 +8,12 @@ causalTree <- function(formula, data, weights, treatment, subset,
 					   split.Rule, split.Honest, HonestSampleSize, split.Bucket, bucketNum = 5,
 					   bucketMax = 100, cv.option, cv.Honest, minsize = 2L, 
 					   x = FALSE, y = TRUE, propensity, control, split.alpha = 0.5, cv.alpha = 0.5,cv.gamma=0.5,split.gamma=0.5,
-					   cost, ...){ 
-
+					   cost,printOutput = F, ...){ 
+  
+  printFn <- function(text, printBoolean = printOutput){
+    if(printBoolean){ print(text) }
+  }
+  
 	Call <- match.call()
 
 	indx <- match(c("formula", "data", "weights", "subset"),
@@ -93,8 +97,8 @@ causalTree <- function(formula, data, weights, treatment, subset,
 
 	split.Rule.int <- pmatch(split.Rule, c("TOT", "CT", "fit", "tstats", "TOTD", "CTD", 
 	                                       "fitD", "tstatsD", "user", "userD","policy","policyD"))
-	print(split.Rule.int)
-	print(split.Rule)
+	printFn(split.Rule.int)
+	printFn(split.Rule)
 	if (is.na(split.Rule.int)) stop("Invalid splitting rule.")
 	split.Rule <- c("TOT", "CT", "fit", "tstats", "TOTD", "CTD", "fitD", 
 	                "tstatsD", "user", "userD","policy","policyD")[split.Rule.int]
