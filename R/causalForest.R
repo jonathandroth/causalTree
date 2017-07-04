@@ -66,7 +66,7 @@ causalForest <- function(formula, data, treatment,
   }
   
   
-  if(!missing(seed) ){
+  if(!missing(seed) && !is.na(seed) ){
       set.seed(seed)
   }
   
