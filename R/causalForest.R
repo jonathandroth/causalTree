@@ -49,7 +49,7 @@ causalForest <- function(formula, data, treatment,
                          propensity, control, split.alpha = 0.5, cv.alpha = 0.5,
                          sample.size.total = floor(nrow(data) / 10), sample.size.train.frac = .5,
                          mtry = ceiling(ncol(data)/3), nodesize = 1, num.trees=nrow(data),
-                         cost=F, weights=F,ncolx,ncov_sample, seed, printOutput = F) {
+                         cost=F, weights=F,ncolx,ncov_sample, seed, printOutput = F, cp = 0) {
   
   # do not implement subset option of causalTree, that is inherited from rpart but have not implemented it here yet
   
@@ -161,7 +161,7 @@ causalForest <- function(formula, data, treatment,
                                     bucketMax = bucketMax, cv.option="CT", cv.Honest=T, 
                                     minsize = nodesize, 
                                     split.alpha = 0.5, cv.alpha = 0.5, xval=0, 
-                                    HonestSampleSize=est.size, cp=0,
+                                    HonestSampleSize=est.size, cp=cp,
                                     printOutput = printOutput)
     }
     else {
